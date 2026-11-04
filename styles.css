@@ -114,7 +114,7 @@ input.bad,textarea.bad{border-color:var(--err)}
 .chip{background:var(--bg);border:1.5px solid var(--line);border-radius:var(--r-s);padding:12px 10px;font-weight:700;font-size:14px;text-align:center;transition:.15s}
 .chip:hover{border-color:var(--mut)}
 .chip[aria-checked=true]{border-color:var(--acc);background:rgba(198,255,61,.1);color:var(--acc)}
-.chip.auto::after{content:"подобран";display:block;font-size:10px;font-weight:700;opacity:.7;letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+.chip.auto::after{content:"по вашей модели";display:block;font-size:10px;font-weight:700;opacity:.7;letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
 
 .fabrics{display:grid;gap:10px}
 .fab{display:grid;grid-template-columns:22px 1fr auto;gap:14px;align-items:start;text-align:left;background:var(--bg);border:1.5px solid var(--line);border-radius:var(--r-s);padding:14px 16px;transition:.15s;width:100%}
@@ -408,3 +408,6 @@ html:not(.js) .banner__slide img{opacity:1}
 .btn.loading::before{content:"";width:16px;height:16px;border-radius:50%;border:2.5px solid rgba(11,15,23,.3);border-top-color:#0b0f17;animation:spin .7s linear infinite}
 input.valid{border-color:rgba(198,255,61,.55)}
 @media(prefers-reduced-motion:reduce){.sk i,.btn.loading::before{animation:none}.combo__list,.done__ic{animation:none}}
+
+.chip.locked{opacity:.3;cursor:not-allowed;pointer-events:none}
+.chip.locked:hover{border-color:var(--line)}

@@ -275,7 +275,7 @@
     var b = document.createElement("button");
     b.type = "button"; b.className = "chip"; b.dataset.k = k; b.setAttribute("role", "radio"); b.setAttribute("aria-checked", "false");
     b.innerHTML = ICONS[k] + "<span>" + B[k].name + "</span>";
-    b.addEventListener("click", function () { state.body = k; state.bodyAuto = false; render(); });
+    b.addEventListener("click", function () { if (state.bodyAuto) return; state.body = k; render(); });
     bodiesEl.appendChild(b);
   });
 
@@ -362,7 +362,7 @@
     // chips
     Array.prototype.forEach.call(bodiesEl.children, function (c) {
       var on = c.dataset.k === state.body;
-      c.setAttribute("aria-checked", on); c.classList.toggle("auto", on && state.bodyAuto);
+      c.setAttribute("aria-checked", on); c.classList.toggle("auto", on && state.bodyAuto); c.classList.toggle("locked", state.bodyAuto && !on); c.disabled = state.bodyAuto && !on;
     });
     Array.prototype.forEach.call(fabEl.children, function (c) {
       c.setAttribute("aria-checked", c.dataset.id === state.fabric);
@@ -385,6 +385,9 @@
     var fn = F.filter(function (x) { return x.id === state.fabric; })[0].name;
     $("#resMeta").textContent = state.brand ? bn + " · " + fn : "Марка, модель, кузов и материал";
     $("#priceBox").hidden = !r; $("#priceEmpty").hidden = !!r; $("#leadForm").hidden = !r || !!submitted;
+    $("#bodyNote").textContent = state.bodyAuto
+      ? "Кузов определён по вашей модели автоматически — ошибиться с выбором невозможно."
+      : "Для моделей из списка кузов определяется сам. Если вашей модели нет в списке, выберите тип кузова вручную.";
     var pe0 = $("#priceEmpty");
     if (!r) {
       var msg = !state.brand ? "Выберите марку автомобиля в первом шаге." : !state.model ? "Теперь выберите или впишите модель." : "Остался тип кузова (шаг 2) — и мы покажем цену.";
