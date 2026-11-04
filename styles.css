@@ -390,3 +390,21 @@ input:focus-visible,textarea:focus-visible{outline:none}
 .banner__slide img.ready{opacity:1}
 html:not(.js) .banner__slide img{opacity:1}
 @media(prefers-reduced-motion:reduce){.banner__slide img{transition:none}}
+
+/* ---- скелетоны и микро-анимации ---- */
+@keyframes shim{to{background-position:-200% 0}}
+.sk{display:grid;gap:12px;margin-bottom:16px;text-align:left}
+.sk i{display:block;border-radius:9px;background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.11) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shim 1.7s linear infinite}
+.sk__t{height:12px;width:38%}.sk__p{height:40px;width:62%}.sk__l{height:12px}.sk__l.s{width:72%}.sk__b{height:44px;border-radius:99px;margin-top:6px}
+.res__empty{border-style:solid;border-color:var(--line);background:rgba(255,255,255,.02)}
+.res__empty p{font-size:14px}
+@keyframes pop{from{opacity:0;transform:translateY(-6px) scale(.99)}to{opacity:1;transform:none}}
+.combo__list{animation:pop .16s ease-out}
+@keyframes bounce-in{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.12);opacity:1}100%{transform:scale(1)}}
+.done__ic{animation:bounce-in .55s cubic-bezier(.2,1.2,.4,1)}
+.btn:active{transform:scale(.98)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn.loading{position:relative}
+.btn.loading::before{content:"";width:16px;height:16px;border-radius:50%;border:2.5px solid rgba(11,15,23,.3);border-top-color:#0b0f17;animation:spin .7s linear infinite}
+input.valid{border-color:rgba(198,255,61,.55)}
+@media(prefers-reduced-motion:reduce){.sk i,.btn.loading::before{animation:none}.combo__list,.done__ic{animation:none}}

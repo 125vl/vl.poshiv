@@ -370,7 +370,7 @@
 
     var r = calc();
     var sig = [state.brand, state.model, state.body, state.fabric, JSON.stringify(state.extras)].join("|");
-    if (submitted && sig !== lastSig) { submitted = false; $("#done").hidden = true; $("#lSubmit").disabled = false; }
+    if (submitted && sig !== lastSig) { submitted = false; $("#done").hidden = true; $("#lSubmit").disabled = false; $("#lSubmit").classList.remove("loading"); }
     lastSig = sig;
     var stepEls = document.querySelectorAll(".calc__form .step");
     stepEls[0].classList.toggle("is-done", !!(state.brand && state.model));
@@ -386,7 +386,7 @@
     var pe0 = $("#priceEmpty");
     if (!r) {
       var msg = !state.brand ? "Выберите марку автомобиля — первый шаг слева." : !state.model ? "Теперь выберите или впишите модель." : "Осталось выбрать тип кузова (шаг 2) — и покажем цену.";
-      pe0.textContent = msg; pe0.classList.toggle("hint", !!state.brand);
+      $("#priceHint").textContent = msg; pe0.classList.toggle("hint", !!state.brand);
     }
     if (!state.known && state.brand) $("#carNote").textContent = "Такой марки нет в списке — ничего страшного: впишите модель, выберите кузов, точную цену назовём по телефону.";
     else if (state.known && state.model && !state.bodyAuto) $("#carNote").textContent = "Модель вписана вручную — расчёт ориентировочный, точную цену подтвердим по телефону.";
@@ -435,6 +435,7 @@
       if (d.length > 7) o += "-" + d.slice(7, 9);
       if (d.length > 9) o += "-" + d.slice(9, 11);
       el.value = o;
+      el.classList.toggle("valid", d.length === 11);
     });
   }
   ["#lPhone", "#aPhone"].forEach(function (s) { maskPhone($(s)); });
@@ -483,7 +484,7 @@
     if (yearVal() === null) { bad(yearEl, true); err.textContent = "Год выпуска — четыре цифры, например 2018 (или оставьте поле пустым)."; err.hidden = false; yearEl.scrollIntoView({ block: "center" }); return; }
     if (!$("#lAgree").checked) { err.textContent = "Нужно согласие на обработку данных."; err.hidden = false; return; }
     if ($("#lHp").value) { submitted = true; $("#leadForm").hidden = true; $("#done").hidden = false; return; }
-    var btn = $("#lSubmit"); btn.disabled = true; btn.textContent = "Отправляем…";
+    var btn = $("#lSubmit"); btn.disabled = true; btn.classList.add("loading"); btn.textContent = "Отправляем…";
     var active = discountActive();
     send({
       type: "calc",
@@ -503,7 +504,7 @@
       $("#done").scrollIntoView({ behavior: "smooth", block: "center" });
     }).catch(function () {
       err.innerHTML = "Не удалось отправить заявку. Позвоните нам: <a href='tel:" + C.phoneRaw + "' style='text-decoration:underline'>" + C.phone + "</a> или напишите в Telegram.";
-      err.hidden = false; btn.disabled = false; btn.textContent = discountActive() ? "Получить звонок со скидкой" : "Заказать звонок";
+      err.hidden = false; btn.disabled = false; btn.classList.remove("loading"); btn.textContent = discountActive() ? "Получить звонок со скидкой" : "Заказать звонок";
     });
   });
 
@@ -516,12 +517,12 @@
     if (!n.value.trim() || !phoneOk(p.value) || !q.value.trim()) { err.textContent = "Заполните имя, телефон и вопрос."; err.hidden = false; return; }
     if (!$("#aAgree").checked) { err.textContent = "Нужно согласие на обработку данных."; err.hidden = false; return; }
     if ($("#aHp").value) { ok.hidden = false; $("#askForm").reset(); return; }
-    var btn = $("#aSubmit"); btn.disabled = true; btn.textContent = "Отправляем…";
+    var btn = $("#aSubmit"); btn.disabled = true; btn.classList.add("loading"); btn.textContent = "Отправляем…";
     send({ type: "question", name: n.value.trim(), phone: p.value, question: q.value.trim(), page: location.href })
-      .then(function () { track("question_submit"); ok.hidden = false; $("#askForm").reset(); btn.textContent = "Отправить ещё вопрос"; btn.disabled = false; })
+      .then(function () { track("question_submit"); ok.hidden = false; $("#askForm").reset(); btn.textContent = "Отправить ещё вопрос"; btn.disabled = false; btn.classList.remove("loading"); })
       .catch(function () {
         err.innerHTML = "Не удалось отправить. Позвоните: <a href='tel:" + C.phoneRaw + "' style='text-decoration:underline'>" + C.phone + "</a>";
-        err.hidden = false; btn.disabled = false; btn.textContent = "Отправить вопрос";
+        err.hidden = false; btn.disabled = false; btn.classList.remove("loading"); btn.textContent = "Отправить вопрос";
       });
   });
   [$("#lName"), $("#aName"), $("#aQuestion"), $("#lPhone"), $("#aPhone")].forEach(function (el) { el.addEventListener("input", function () { bad(el, false); }); });
