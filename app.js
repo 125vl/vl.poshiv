@@ -222,14 +222,30 @@
   $("#statModels").textContent = Math.floor(total / 100) * 100 + "+";
 
   /* bodies */
-  var W = '<circle cx="18" cy="24" r="4.6"/><circle cx="54" cy="24" r="4.6"/>';
-  function ic(d) { return '<svg viewBox="0 0 72 32" aria-hidden="true"><path d="' + d + '"/>' + W + '</svg>'; }
+  function ic(body, win, extra, wx) {
+    wx = wx || [24, 70];
+    var w = wx.map(function (x) { return '<circle cx="' + x + '" cy="34" r="6"/>'; }).join("");
+    return '<svg viewBox="0 0 96 44" aria-hidden="true"><path d="' + body + '"/><path class="win" d="' + (win || "") + '"/>' + (extra || "") + w + '</svg>';
+  }
   var ICONS = {
-    hb: ic("M4 24V15L14 8H40L54 15H68V24H4"), sd: ic("M4 24V16H12L20 8H40L50 15H68V24H4"),
-    wg: ic("M4 24V10L8 8H42L54 15H68V24H4"), cp: ic("M4 24V17L8 16L24 8H36L56 16H68V24H4"),
-    cr: ic("M4 24V11L8 7H42L54 15H68V24H4"), su: ic("M4 24V6H46L56 14H68V24H4"),
-    mv: ic("M4 24V10L10 6H40L60 14H68V24H4"), pk: ic("M4 24V14H28V8H44L54 14H68V24H4"),
-    vn: ic("M4 24V5H50L62 13H68V24H4")
+    // хэтчбек: короткий, «обрубленный» зад, купол крыши
+    hb: ic("M12 34V23L18 12H52L68 21L86 24V34", "M24 15H37V21H20Z M40 15H51L61 21H40Z"),
+    // седан: три объёма, отдельный багажник слева
+    sd: ic("M6 34V25H15L26 11H56L70 21L90 24V34", "M28 14H40V21H22Z M43 14H55L64 21H43Z"),
+    // универсал: длинная крыша до самого зада, три боковых окна
+    wg: ic("M5 34V11L9 9H56L70 21L90 24V34", "M11 12H24V21H11Z M27 12H40V21H27Z M43 12H55L64 21H43Z"),
+    // купе: низкий, скошенная крыша без заднего объёма
+    cp: ic("M6 34V27L10 25L38 15H54L72 24L92 27V34", "M40 17H53L63 24H35Z"),
+    // кроссовер: приподнят над землёй, пластик по низу
+    cr: ic("M8 30V16L14 9H56L72 19L90 22V30", "M17 12H38V19H13Z M41 12H55L65 19H41Z", '<path class="win" d="M8 27H90"/>', [26, 72]),
+    // внедорожник: прямоугольный, багажник на крыше, запаска сзади
+    su: ic("M14 34V8H60L72 18H90V34", "M18 12H36V20H18Z M39 12H58V20H39Z", '<path d="M18 4H56"/><circle cx="9" cy="23" r="6"/>', [28, 74]),
+    // минивэн: однообъёмный, высокий, сдвижная дверь
+    mv: ic("M6 34V19Q6 8 20 8H50Q66 8 78 18L90 22V34", "M12 12H30V20H10Z M33 12H47V20H33Z M50 12H55L68 20H50Z", '<path class="win" d="M33 23V32"/>'),
+    // пикап: кабина справа, открытый кузов слева
+    pk: ic("M6 34V22H34V10H56L68 20H90V34", "M38 13H54L61 20H38Z", '<path class="win" d="M10 26H31"/>'),
+    // микроавтобус: высокий фургон, много окон, плоский нос
+    vn: ic("M6 34V6H62L76 18H90V34", "M10 10H22V18H10Z M26 10H38V18H26Z M42 10H60L68 18H42Z")
   };
   var bodiesEl = $("#bodies");
   Object.keys(B).forEach(function (k) {
@@ -286,7 +302,7 @@
     var disc = Math.max(floor, Math.round(price * (1 - C.discountPercent / 100) / P.roundTo) * P.roundTo);
     if (disc > price) disc = price;
     var workdays = Math.ceil(hours / (rush ? P.rushHoursPerDay : P.hoursPerDay));
-    var lo = rush ? 1 + workdays : P.prepDays + workdays, hi = rush ? lo + 1 : lo + P.queueDays;
+    var lo = rush ? 2 + workdays : P.prepDays + workdays, hi = rush ? lo + 1 : lo + P.queueDays;
     function profitAt(p) { return p * (1 - P.taxPct) - base; }
     return { area: area, fabric: f, hours: hours, fabricCost: fabricCost, mats: mats, labor: labor, overhead: overhead, cac: P.cacPerOrder,
       cost: base, price: price, disc: disc, profit: profitAt(price), profitDisc: profitAt(disc), extNames: names, lo: lo, hi: hi, rush: !!rush };
