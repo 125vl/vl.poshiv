@@ -173,8 +173,8 @@ input.bad,textarea.bad{border-color:var(--err)}
 .res__lines li{display:flex;justify-content:space-between;gap:12px}
 .res__lines b{color:var(--tx);font-weight:600;text-align:right}
 .lead{margin-top:0}
-form.lead{margin-top:20px;padding-top:20px;border-top:1px solid var(--line);display:grid;gap:14px}
-form.lead h4{font-size:17px}
+form.lform{margin-top:20px;padding-top:20px;border-top:1px solid var(--line);display:grid;gap:14px}
+form.lform h4{font-size:17px}
 .check{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--mut);cursor:pointer}
 .check input{accent-color:var(--acc);margin-top:3px;width:16px;height:16px;flex:none}
 .tiny{font-size:12.5px;color:var(--mut);line-height:1.5}
@@ -290,3 +290,21 @@ details p{padding:0 20px 20px;color:var(--mut)}
 .chips.attn{animation:attn 1.2s ease-in-out 3}
 @keyframes attn{0%,100%{box-shadow:0 0 0 0 rgba(198,255,61,0)}50%{box-shadow:0 0 0 6px rgba(198,255,61,.25);border-radius:14px}}
 @media(max-width:640px){.fld--year{max-width:none}}
+
+/* review additions */
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+input:focus-visible,textarea:focus-visible{outline:none}
+.hp{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+.hero__micro{margin-top:12px;font-size:14px;color:var(--mut);display:flex;align-items:center;gap:8px}
+.hero__micro::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--acc);flex:none}
+.fab__r{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.fab__p{font-family:var(--fh);font-size:15px;font-weight:700;color:var(--tx);white-space:nowrap}
+.fab[aria-checked=true] .fab__p{color:var(--acc)}
+.fab__p:empty{display:none}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.seg button{background:var(--bg);border:1.5px solid var(--line);border-radius:var(--r-s);padding:11px 6px;font-weight:700;font-size:14px;transition:.15s}
+.seg button:hover{border-color:var(--mut)}
+.seg button[aria-checked=true]{border-color:var(--acc);background:rgba(198,255,61,.1);color:var(--acc)}
+.done__steps{text-align:left;margin:14px auto 4px;max-width:340px;counter-reset:d;display:grid;gap:8px}
+.done__steps li{counter-increment:d;position:relative;padding-left:34px;font-size:14px;color:var(--tx)}
+.done__steps li::before{content:counter(d);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;background:rgba(198,255,61,.15);color:var(--acc);font-weight:800;font-size:13px;display:grid;place-items:center}

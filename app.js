@@ -8,6 +8,24 @@
     set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   };
 
+  /* ---------- аналитика (Яндекс.Метрика, если задан metrikaId) ---------- */
+  window.dataLayer = window.dataLayer || [];
+  function track(goal, params) {
+    try { window.dataLayer.push({ event: goal, params: params || {} }); } catch (e) {}
+    try { if (window.ym && C.metrikaId) window.ym(C.metrikaId, "reachGoal", goal, params || {}); } catch (e) {}
+  }
+  if (C.metrikaId) {
+    (function (m, e, t, r, i, k, a) { m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); }; m[i].l = 1 * new Date(); k = e.createElement(t); a = e.getElementsByTagName(t)[0]; k.async = 1; k.src = r; a.parentNode.insertBefore(k, a); })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+    window.ym(C.metrikaId, "init", { clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: false });
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("a[href]"); if (!a) return;
+    var h = a.getAttribute("href") || "";
+    if (h.indexOf("tel:") === 0) track("phone_click");
+    else if (h.indexOf("t.me") >= 0) track("telegram_click");
+    else if (h.indexOf("wa.me") >= 0) track("whatsapp_click");
+  });
+
   /* ---------- config → DOM ---------- */
   document.querySelectorAll("[data-cfg]").forEach(function (el) { el.textContent = C[el.dataset.cfg] || ""; });
   document.querySelectorAll("[data-phone]").forEach(function (el) { el.href = "tel:" + C.phoneRaw; if (el.classList.contains("hdr__phone")) el.textContent = C.phone; });
@@ -52,7 +70,7 @@
   })();
 
   /* ---------- calculator state ---------- */
-  var state = { brand: "", model: "", mult: 1, body: null, bodyAuto: false, fabric: "premium", extras: {} };
+  var state = { contact: "Звонок", brand: "", model: "", mult: 1, body: null, bodyAuto: false, fabric: "premium", extras: {} };
 
   var brandEl = $("#brand"), modelEl = $("#model");
 
@@ -177,9 +195,17 @@
   F.forEach(function (f, i) {
     var b = document.createElement("button");
     b.type = "button"; b.className = "fab"; b.dataset.id = f.id; b.setAttribute("role", "radio"); b.setAttribute("aria-checked", "false");
-    b.innerHTML = "<i></i><div><b>" + f.name + "</b><small>" + f.desc + "</small></div><span class='tag t" + (i + 1) + "'>" + f.tag + "</span>";
+    b.innerHTML = "<i></i><div><b>" + f.name + "</b><small>" + f.desc + "</small></div><div class='fab__r'><span class='tag t" + (i + 1) + "'>" + f.tag + "</span><span class='fab__p'></span></div>";
     b.addEventListener("click", function () { state.fabric = f.id; render(); });
     fabEl.appendChild(b);
+  });
+
+  /* способ связи */
+  var cpick = $("#contactPick");
+  ["Звонок", "Telegram", "WhatsApp"].forEach(function (n) {
+    var b = document.createElement("button"); b.type = "button"; b.textContent = n; b.setAttribute("role", "radio"); b.setAttribute("aria-checked", n === state.contact);
+    b.addEventListener("click", function () { state.contact = n; Array.prototype.forEach.call(cpick.children, function (c) { c.setAttribute("aria-checked", c.textContent === n); }); });
+    cpick.appendChild(b);
   });
 
   /* extras */
@@ -192,9 +218,9 @@
   });
 
   /* ---------- pricing ---------- */
-  function calc() {
+  function calc(fid) {
     if (!state.brand || !state.model || !state.body) return null;
-    var f = F.filter(function (x) { return x.id === state.fabric; })[0];
+    var f = F.filter(function (x) { return x.id === (fid || state.fabric); })[0];
     var area = B[state.body].area * state.mult;
     var fabricCost = area * f.purchase;
     var prod = P.fixedPerCover + area * P.sewPerM2;
@@ -235,7 +261,11 @@
       var on = c.dataset.k === state.body;
       c.setAttribute("aria-checked", on); c.classList.toggle("auto", on && state.bodyAuto);
     });
-    Array.prototype.forEach.call(fabEl.children, function (c) { c.setAttribute("aria-checked", c.dataset.id === state.fabric); });
+    Array.prototype.forEach.call(fabEl.children, function (c) {
+      c.setAttribute("aria-checked", c.dataset.id === state.fabric);
+      var rr = calc(c.dataset.id), pp = c.querySelector(".fab__p");
+      pp.textContent = rr ? fmt(discountActive() ? rr.disc : rr.price) : "";
+    });
 
     var r = calc();
     var sig = [state.brand, state.model, state.body, state.fabric, JSON.stringify(state.extras)].join("|");
@@ -257,10 +287,10 @@
     else $("#carNote").textContent = "Не нашли свою модель? Впишите её вручную и выберите кузов — цену уточним по телефону.";
     var mc = $(".mbar .btn:last-child");
     if (!r) { mc.textContent = "Рассчитать"; mc.setAttribute("href", "#calc"); return; }
-    if (!started) { started = true; startTimer(); }
+    if (!started) { started = true; startTimer(); track("price_shown", { car: state.brand + " " + state.model }); }
     var active = discountActive();
     $("#lSubmit").textContent = active ? "Получить звонок со скидкой" : "Заказать звонок";
-    $(".lead h4").textContent = active ? "Закрепите скидку — мы перезвоним" : "Оставьте заявку — мы перезвоним";
+    $(".lform h4").textContent = active ? "Закрепите скидку — мы перезвоним" : "Оставьте заявку — мы перезвоним";
     var shown = active ? r.disc : r.price;
     $("#priceOld").parentNode.style.visibility = active ? "visible" : "hidden";
     $("#priceOld").textContent = fmt(r.price);
@@ -306,7 +336,7 @@
     var p = d.pricing || {}, c = d.car || {};
     return [
       "НОВАЯ ЗАЯВКА — РАСЧЁТ ЧЕХЛА",
-      "Имя: " + d.name, "Телефон: " + d.phone, d.comment ? "Комментарий: " + d.comment : "", "",
+      "Имя: " + d.name, "Телефон: " + d.phone, "Как связаться: " + (d.contact || "Звонок"), d.comment ? "Комментарий: " + d.comment : "", "",
       "Авто: " + c.brand + " " + c.model + (c.year ? " (" + c.year + ")" : "") + (c.knownModel ? "" : " [модель вписана вручную]"),
       "Кузов: " + c.body, "Материал: " + d.fabric, "Площадь: " + d.areaM2 + " м²",
       d.extras && d.extras.length ? "Опции: " + d.extras.join(", ") : "", "",
@@ -338,11 +368,12 @@
     if (!n.value.trim() || !phoneOk(p.value)) { err.textContent = "Укажите имя и телефон полностью."; err.hidden = false; return; }
     if (yearVal() === null) { bad(yearEl, true); err.textContent = "Год выпуска — четыре цифры, например 2018 (или оставьте поле пустым)."; err.hidden = false; yearEl.scrollIntoView({ block: "center" }); return; }
     if (!$("#lAgree").checked) { err.textContent = "Нужно согласие на обработку данных."; err.hidden = false; return; }
+    if ($("#lHp").value) { submitted = true; $("#leadForm").hidden = true; $("#done").hidden = false; return; }
     var btn = $("#lSubmit"); btn.disabled = true; btn.textContent = "Отправляем…";
     var active = discountActive();
     send({
       type: "calc",
-      name: n.value.trim(), phone: p.value, comment: $("#lComment").value.trim(),
+      name: n.value.trim(), phone: p.value, contact: state.contact, comment: $("#lComment").value.trim(),
       car: { brand: state.brand, model: state.model, year: yearVal(), knownModel: !!state.bodyAuto, body: B[state.body].name },
       fabric: r.fabric.name, extras: r.extNames, areaM2: +r.area.toFixed(2),
       pricing: {
@@ -352,6 +383,7 @@
       },
       page: location.href
     }).then(function () {
+      track("lead_submit", { price: r.price, car: state.brand + " " + state.model, discount: active });
       submitted = true; $("#leadForm").hidden = true; $("#done").hidden = false;
       $("#done").scrollIntoView({ behavior: "smooth", block: "center" });
     }).catch(function () {
@@ -368,9 +400,10 @@
     bad(n, !n.value.trim()); bad(p, !phoneOk(p.value)); bad(q, !q.value.trim());
     if (!n.value.trim() || !phoneOk(p.value) || !q.value.trim()) { err.textContent = "Заполните имя, телефон и вопрос."; err.hidden = false; return; }
     if (!$("#aAgree").checked) { err.textContent = "Нужно согласие на обработку данных."; err.hidden = false; return; }
+    if ($("#aHp").value) { ok.hidden = false; $("#askForm").reset(); return; }
     var btn = $("#aSubmit"); btn.disabled = true; btn.textContent = "Отправляем…";
     send({ type: "question", name: n.value.trim(), phone: p.value, question: q.value.trim(), page: location.href })
-      .then(function () { ok.hidden = false; $("#askForm").reset(); btn.textContent = "Отправить ещё вопрос"; btn.disabled = false; })
+      .then(function () { track("question_submit"); ok.hidden = false; $("#askForm").reset(); btn.textContent = "Отправить ещё вопрос"; btn.disabled = false; })
       .catch(function () {
         err.innerHTML = "Не удалось отправить. Позвоните: <a href='tel:" + C.phoneRaw + "' style='text-decoration:underline'>" + C.phone + "</a>";
         err.hidden = false; btn.disabled = false; btn.textContent = "Отправить вопрос";
@@ -384,11 +417,29 @@
     var base = B.cr.area * f.purchase + P.fixedPerCover + B.cr.area * P.sewPerM2;
     var from = Math.round(B.hb.area * f.purchase * 1 + P.fixedPerCover + B.hb.area * P.sewPerM2);
     from = Math.max(P.minPrice, Math.round(from * (1 + P.markup) / P.roundTo) * P.roundTo);
+    if (i === 0) $("#heroFrom").textContent = "от " + fmt(from);
     var d = document.createElement("div");
     d.className = "fcard" + (i === 1 ? " hit" : "") + (i === 2 ? " t3" : "");
     d.innerHTML = "<span class='tag'>" + f.tag + "</span><h3>" + f.name + "</h3><p>" + f.desc + "</p><div class='from'>Чехол на хэтчбек от<b>" + fmt(from) + "</b></div>";
     fc.appendChild(d);
   });
+
+  /* ---------- структурированные данные для поисковиков ---------- */
+  (function () {
+    var g = [];
+    if (C.phoneRaw && C.phone.indexOf("000-00-00") < 0) {
+      g.push({ "@type": "LocalBusiness", name: C.brand, telephone: C.phoneRaw, address: { "@type": "PostalAddress", addressLocality: C.city, addressCountry: "RU" }, areaServed: C.city, url: location.href.split("#")[0], image: location.origin + location.pathname.replace(/[^\/]*$/, "") + "assets/og.jpg" });
+    }
+    var q = [];
+    document.querySelectorAll("#faq details").forEach(function (d) {
+      q.push({ "@type": "Question", name: d.querySelector("summary").textContent, acceptedAnswer: { "@type": "Answer", text: d.querySelector("p").textContent } });
+    });
+    if (q.length) g.push({ "@type": "FAQPage", mainEntity: q });
+    if (!g.length) return;
+    var s = document.createElement("script"); s.type = "application/ld+json";
+    s.textContent = JSON.stringify({ "@context": "https://schema.org", "@graph": g });
+    document.head.appendChild(s);
+  })();
 
   render();
 })();

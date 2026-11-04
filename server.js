@@ -26,6 +26,7 @@ function format(d) {
     `🚗 <b>Новая заявка — расчёт чехла</b>`,
     `👤 ${esc(clip(d.name, 80))}`,
     `📞 ${esc(clip(d.phone, 30))}`,
+    `🔔 Связаться: ${esc(clip(d.contact || "Звонок", 20))}`,
     d.comment ? `💬 ${esc(clip(d.comment, 500))}` : "",
     ``,
     `<b>Авто:</b> ${esc(clip(c.brand, 60))} ${esc(clip(c.model, 80))}${c.year ? " (" + esc(c.year) + ")" : ""}${c.knownModel ? "" : " (модель вписана вручную)"}`,

@@ -16,6 +16,7 @@ window.CONFIG = {
   discountHours: 24,
   // Заявки на GitHub Pages: ключ Web3Forms (бесплатно, web3forms.com → письмо на вашу почту). Вставьте ключ сюда:
   web3formsKey: "",
+  metrikaId: "",            // номер счётчика Яндекс.Метрики (необязательно) — включит цели воронки
   leadEndpoint: "/api/lead" // если ключа нет — собственный сервер server.js
 };
 
