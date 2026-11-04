@@ -1,0 +1,6 @@
+{
+  "name": "avto-site",
+  "private": true,
+  "type": "commonjs",
+  "scripts": { "start": "node server.js" }
+}

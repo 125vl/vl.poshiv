@@ -1,0 +1,5 @@
+leads.jsonl
+.claude/
+node_modules/
+/*.png
+.DS_Store
