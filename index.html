@@ -31,7 +31,7 @@
       <svg viewBox="0 0 64 64" width="30" height="30" aria-hidden="true"><path d="M8 42c4-15 13-22 24-22s20 7 24 22z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><circle cx="20" cy="45" r="4.5" fill="currentColor"/><circle cx="44" cy="45" r="4.5" fill="currentColor"/></svg>
       <span data-cfg="brand">АвтоЧехол ДВ</span>
     </a>
-    <nav class="nav" aria-label="Разделы">
+    <nav class="nav" id="nav" aria-label="Разделы">
       <a href="#calc">Калькулятор</a>
       <a href="#how">Как работаем</a>
       <a href="#fabrics">Материалы</a>
@@ -40,7 +40,8 @@
     </nav>
     <div class="hdr__right">
       <a class="hdr__phone" data-phone href="tel:+74230000000">+7 (423) 000-00-00</a>
-      <a class="btn btn--sm" href="#calc">Рассчитать</a>
+      <a class="btn btn--sm hdr__cta" href="#calc">Рассчитать</a>
+      <button class="burger" id="burger" aria-label="Меню" aria-expanded="false" aria-controls="nav"><i></i><i></i><i></i></button>
     </div>
   </div>
 </header>
@@ -59,7 +60,7 @@
       </div>
       <p class="hero__micro">Без звонков и регистрации — цена сразу на экране</p>
       <ul class="hero__facts">
-        <li><b>3–7 дн.</b><span>срок пошива</span></li>
+        <li><b id="heroDays">4–8 дн.</b><span>срок пошива</span></li>
         <li><b>−10%</b><span>при заявке за 24 ч</span></li>
         <li><b id="heroFrom">от 7 250 ₽</b><span>чехол на хэтчбек</span></li>
       </ul>
@@ -78,6 +79,7 @@
       <button class="banner__arrow banner__arrow--r" id="bNext" aria-label="Следующее фото">›</button>
       <div class="banner__dots" id="bDots"></div>
       <div class="banner__progress"><i id="bProg"></i></div>
+      <button class="banner__pause" id="bPause" aria-label="Остановить автопрокрутку"><svg class="i-pause" viewBox="0 0 16 16"><path d="M4 3h3v10H4zM9 3h3v10H9z"/></svg><svg class="i-play" viewBox="0 0 16 16"><path d="M4 3l9 5-9 5z"/></svg></button>
     </div>
   </div>
 </section>
@@ -196,7 +198,7 @@
             <input type="text" name="website" id="lHp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
             <label class="check">
               <input type="checkbox" id="lAgree" checked>
-              <span>Согласен на обработку персональных данных</span>
+              <span>Согласен на <a href="privacy.html" target="_blank" rel="noopener">обработку персональных данных</a></span>
             </label>
             <button class="btn btn--lg btn--block" type="submit" id="lSubmit">Получить звонок со скидкой</button>
             <p class="err" id="lErr" role="alert" hidden></p>
@@ -229,7 +231,7 @@
     <ol class="steps">
       <li><b>1</b><h3>Заявка</h3><p>Считаете цену на сайте и оставляете имя и телефон. Можно написать нам в мессенджер.</p></li>
       <li><b>2</b><h3>Уточнение</h3><p>Перезваниваем, уточняем модификацию, цвет и опции. Фиксируем итоговую цену.</p></li>
-      <li><b>3</b><h3>Пошив</h3><p>Делаем выкройку по габаритам модели и шьём на собственном производстве за 3–7 дней.</p></li>
+      <li><b>3</b><h3>Пошив</h3><p>Делаем выкройку по габаритам модели и шьём на собственном производстве за несколько рабочих дней.</p></li>
       <li><b>4</b><h3>Примерка и доставка</h3><p>Привозим по Владивостоку или ждёте на самовывозе. Проверяем посадку на вашей машине.</p></li>
     </ol>
   </div>
@@ -283,7 +285,7 @@
       <details><summary>Как рассчитывается цена?</summary><p>Цена складывается из закупки ткани по площади вашего кузова, стоимости пошива и нашей наценки. Калькулятор считает это автоматически, а после звонка мы подтверждаем итоговую сумму по вашей модификации.</p></details>
       <details><summary>Как работает скидка на 24 часа?</summary><p>После расчёта запускается таймер. Оставьте заявку, пока он идёт, — зафиксируем скидку 10% на заказ.</p></details>
       <details><summary>Моей модели нет в списке. Что делать?</summary><p>Впишите марку и модель вручную и выберите тип кузова — рассчитаем ориентировочно, а точную цену назовём по телефону.</p></details>
-      <details><summary>Сколько шьётся чехол?</summary><p>Обычно 3–7 рабочих дней. Срочный пошив обсуждается отдельно.</p></details>
+      <details><summary>Сколько шьётся чехол?</summary><p>Обычно от 4 до 8 рабочих дней: срок зависит от размера машины и опций, точный покажет калькулятор. Нужно быстрее — есть срочный пошив за 2–3 дня с доплатой 25%.</p></details>
       <details><summary>Чехол защитит от дождя и снега?</summary><p>Да. Ткани водоотталкивающие, швы проклеиваются. Мембранный вариант ещё и дышит, поэтому под ним не образуется конденсат.</p></details>
       <details><summary>Можно ли использовать чехол на улице круглый год?</summary><p>Да, ткани с УФ-защитой выдерживают приморское солнце и зимние перепады температур. Для стоянки на ветру добавьте усиленные подпруги.</p></details>
       <details><summary>Есть доставка?</summary><p>Привозим по Владивостоку и ближайшим районам, либо можно забрать самостоятельно.</p></details>
@@ -311,7 +313,7 @@
       <label class="fld"><span>Телефон</span><input name="phone" id="aPhone" type="tel" inputmode="tel" placeholder="+7 (___) ___-__-__" autocomplete="tel" required></label>
       <label class="fld"><span>Ваш вопрос</span><textarea name="question" id="aQuestion" rows="4" placeholder="Например: подойдёт ли чехол на Land Cruiser с багажником на крыше?" required></textarea></label>
       <input type="text" name="website" id="aHp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <label class="check"><input type="checkbox" id="aAgree" checked><span>Согласен на обработку персональных данных</span></label>
+      <label class="check"><input type="checkbox" id="aAgree" checked><span>Согласен на <a href="privacy.html" target="_blank" rel="noopener">обработку персональных данных</a></span></label>
       <button class="btn btn--lg btn--block" type="submit" id="aSubmit">Отправить вопрос</button>
       <p class="err" id="aErr" role="alert" hidden></p>
       <p class="ok" id="aOk" hidden>Спасибо! Вопрос отправлен — ответим в ближайшее время.</p>
@@ -321,9 +323,22 @@
 </main>
 
 <footer class="ftr">
-  <div class="wrap ftr__in">
-    <div><b data-cfg="brand">АвтоЧехол ДВ</b> · пошив чехлов на автомобили · Владивосток</div>
-    <div class="tiny">© <span id="year"></span> Все права защищены. Расчёт на сайте предварительный и не является публичной офертой.</div>
+  <div class="wrap">
+    <div class="ftr__grid">
+      <div>
+        <a class="logo" href="#top"><svg viewBox="0 0 64 64" width="26" height="26" aria-hidden="true"><path d="M8 42c4-15 13-22 24-22s20 7 24 22z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><circle cx="20" cy="45" r="4.5" fill="currentColor"/><circle cx="44" cy="45" r="4.5" fill="currentColor"/></svg><span data-cfg="brand">АвтоЧехол ДВ</span></a>
+        <p class="tiny">Индивидуальный пошив защитных чехлов на автомобили. Владивосток.</p>
+      </div>
+      <nav class="ftr__nav" aria-label="Разделы сайта">
+        <a href="#calc">Калькулятор</a><a href="#how">Как работаем</a><a href="#fabrics">Материалы</a><a href="#faq">Вопросы</a><a href="#contacts">Контакты</a>
+      </nav>
+      <div class="ftr__c">
+        <a data-phone data-phone-text href="tel:+74230000000">+7 (423) 000-00-00</a>
+        <span class="tiny" data-cfg="workHours"></span>
+        <span class="tiny" data-cfg="address"></span>
+      </div>
+    </div>
+    <div class="ftr__bot tiny">© <span id="year"></span> Все права защищены · Расчёт на сайте предварительный и не является публичной офертой · <a href="privacy.html">Политика конфиденциальности</a></div>
   </div>
 </footer>
 

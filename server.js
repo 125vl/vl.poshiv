@@ -37,11 +37,14 @@ function format(d) {
     ``,
     `<b>Расчёт:</b>`,
     `• Закупка ткани: ${rub(p.fabricPurchase)}`,
-    `• Производство: ${rub(p.production)}`,
-    p.options ? `• Опции: ${rub(p.options)}` : "",
+    `• Расходники: ${rub(p.materials)}`,
+    `• Труд: ${esc(p.laborHours)} ч = ${rub(p.labor)}`,
+    `• Накладные: ${rub(p.overhead)}`,
+    `• Реклама на заказ: ${rub(p.cac)}`,
     `• Себестоимость: ${rub(p.cost)}`,
-    `• Наценка: ${rub(p.markup)}`,
-    `• Цена без скидки: ${rub(p.price)}`,
+    `• Цена без скидки: ${rub(p.price)}${p.rush ? " (срочный)" : ""}`,
+    `• Прибыль после налога: ${rub(p.profit)}`,
+    `• Срок: ${esc(p.leadTime)}`,
     `<b>К оплате${p.discountPercent ? ` со скидкой ${esc(p.discountPercent)}%` : ""}: ${rub(p.priceWithDiscount)}</b>`
   ].filter(x => x !== "").join("\n");
 }
