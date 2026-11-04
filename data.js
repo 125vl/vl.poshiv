@@ -125,7 +125,7 @@ window.CARS = {
   ],
   "Genesis": [["G70","sd",0.98],["G80","sd",1.03],["G90","sd",1.08],["GV60","cr"],["GV70","cr"],["GV80","su",1.05]],
   "SsangYong": [["Actyon","cr"],["Actyon Sports","pk"],["Kyron","cr"],["Rexton","su"],["Musso","pk"],["Korando","cr"],["Tivoli","cr",0.95],["Rodius","mv",1.05],["Torres","cr"],["Istana","vn"]],
-  "Daewoo / Chevrolet (Корея)": [["Nexia","sd",0.95],["Matiz","hb",0.82],["Lanos","sd",0.97],["Gentra","sd"],["Lacetti","sd"],["Winstorm","cr",1.02]],
+  "Daewoo": [["Nexia","sd",0.95],["Matiz","hb",0.82],["Lanos","sd",0.97],["Gentra","sd"],["Lacetti","sd"],["Winstorm","cr",1.02]],
   "Chevrolet": [["Cruze","sd"],["Aveo","sd",0.96],["Lacetti","sd"],["Spark","hb",0.84],["Cobalt","sd"],["Captiva","cr",1.03],["Trailblazer","su",1.05],["Tahoe","su",1.15],["Suburban","su",1.2],["Niva","cr",0.95],["Orlando","mv",1.0],["Equinox","cr"],["Malibu","sd",1.02],["Camaro","cp"],["Silverado","pk",1.12],["Colorado","pk"],["Tracker","cr",0.95],["Blazer","su",1.0],["Traverse","su",1.1],["Express","vn",1.1]],
   "Ford": [["Focus","hb",0.98],["Focus седан","sd"],["Mondeo","sd",1.02],["Fiesta","hb",0.9],["Kuga","cr"],["EcoSport","cr",0.93],["Explorer","su",1.08],["Edge","cr",1.05],["Expedition","su",1.2],["F-150","pk",1.15],["Ranger","pk"],["Transit","vn",1.1],["Transit Custom","vn"],["Mustang","cp"],["Galaxy","mv"],["S-Max","mv"],["C-Max","mv",0.95],["Fusion","sd"],["Escape","cr"],["Bronco","su"],["Maverick","pk",0.95],["Tourneo","vn",0.95],["Puma","cr",0.93],["Mustang Mach-E","cr"]],
   "Volkswagen": [["Polo","sd",0.96],["Polo хэтчбек","hb",0.9],["Golf","hb",0.97],["Passat","sd",1.02],["Passat Variant","wg",1.02],["Jetta","sd"],["Tiguan","cr"],["Touareg","su",1.05],["Teramont / Atlas","cr",1.12],["Caddy","vn",0.9],["Transporter / T5 / T6","vn"],["Multivan","mv",1.05],["Sharan","mv"],["Touran","mv"],["Amarok","pk"],["T-Roc","cr",0.95],["Taos","cr"],["Arteon","cp",1.03],["Scirocco","cp",0.95],["Beetle","hb",0.9],["ID.4","cr"],["Up!","hb",0.82],["Crafter","vn",1.2],["Bora","sd"],["Lupo","hb",0.8]],
@@ -156,7 +156,7 @@ window.CARS = {
   "УАЗ": [["Patriot","su"],["Hunter","su",0.97],["Буханка","vn",1.0],["Pickup","pk"],["Профи","pk",1.05]],
   "ГАЗ": [["Газель Next","vn",1.1],["Газель (3302)","vn",1.1],["Соболь","vn",1.0],["Волга 3110","sd",1.0],["Волга 31105","sd",1.0],["Садко","su",1.2]],
   "Moskvich / Москвич": [["Москвич 3","cr",0.97],["Москвич 6","sd"]],
-  "Chery": [["Tiggo 4","cr",0.95],["Tiggo 7 Pro","cr"],["Tiggo 8","cr",1.04],["Tiggo 8 Pro Max","cr",1.05],["Arrizo 8","sd"],["Arrizo 6","sd",0.97],["Omoda C5","cr"],["Omoda S5","sd"],["Tiggo 5","cr"],["Amulet","sd",0.95],["QQ","hb",0.8],["Exeed TXL","cr",1.04],["Exeed LX","cr"],["Exeed VX","cr",1.06],["Jaecoo J7","cr"],["Jaecoo J8","cr",1.04]],
+  "Chery": [["Tiggo 4","cr",0.95],["Tiggo 7 Pro","cr"],["Tiggo 8","cr",1.04],["Tiggo 8 Pro Max","cr",1.05],["Arrizo 8","sd"],["Arrizo 6","sd",0.97],["Tiggo 5","cr"],["Amulet","sd",0.95],["QQ","hb",0.8]],
   "Haval": [["Jolion","cr",0.97],["F7","cr"],["F7x","cr"],["H6","cr"],["H9","su",1.05],["Dargo","cr",1.02],["M6","cr",0.97],["H3","cr"],["H5","pk"],["Big Dog","cr"],["Haval H4","cr"],["Haval F5","cr"],["Haval Monster","cr"]],
   "Geely": [["Coolray","cr",0.96],["Atlas","cr"],["Atlas Pro","cr"],["Monjaro","cr",1.06],["Tugella","cr",1.0],["Emgrand","sd"],["Emgrand 7","sd"],["Preface","sd",1.02],["Okavango","mv",1.05],["Geometry C","cr"],["Azkarra","cr"],["Starray","cr"],["Cityray","cr",0.97],["Belgee X70","cr"],["MK","sd",0.95],["Vision","sd",0.95]],
   "Changan": [["CS35 Plus","cr",0.96],["CS55 Plus","cr"],["CS75 Plus","cr",1.02],["CS85","cr",1.03],["UNI-K","cr",1.04],["UNI-T","cr"],["UNI-V","cp"],["Eado","sd"],["Alsvin","sd",0.97],["Hunter Plus","pk",1.0],["Lamore","cr"],["Deepal S7","cr"],["Deepal L07","sd"]],
@@ -191,7 +191,7 @@ window.BRAND_ALIASES = {
   "ГАЗ": "газ газель волга", "Moskvich / Москвич": "москвич", "Chery": "чери", "Haval": "хавал хавейл", "Geely": "джили гили",
   "Changan": "чанган", "Exeed / Omoda / Jaecoo": "эксид омода жаку", "Great Wall": "грейт волл", "Tank": "танк", "BYD": "бид бйд",
   "Zeekr": "зикр зеекр", "Li Auto": "ли авто лиавто", "NIO / Xpeng / Voyah": "нио хпенг вояч", "JAC": "джак", "FAW / Hongqi": "фав хунци",
-  "Daewoo / Chevrolet (Корея)": "дэу дэво", "Dongfeng / Forthing / DFM": "донфенг фортинг", "Lynk & Co / Baic / Wey": "линк бейк вей",
+  "Daewoo": "дэу дэво", "Dongfeng / Forthing / DFM": "донфенг фортинг", "Lynk & Co / Baic / Wey": "линк бейк вей",
   "Другие китайские": "китайские китаец", "Другая марка / не нашёл": "другая не нашел"
 };
 

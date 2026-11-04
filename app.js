@@ -41,6 +41,11 @@
     var first = real[0].cloneNode(true), last = real[n - 1].cloneNode(true);
     [first, last].forEach(function (c) { c.setAttribute("aria-hidden", "true"); var im = c.querySelector("img"); im.alt = ""; im.removeAttribute("fetchpriority"); im.loading = "eager"; });
     track.insertBefore(last, real[0]); track.appendChild(first);
+    // плавное появление фото поверх размытого превью; остальные слайды догружаем сразу после первого
+    var allImgs = root.querySelectorAll("img"), firstImg = real[0].querySelector("img");
+    function whenReady(im, fn) { if (im.complete && im.naturalWidth) fn(); else { im.addEventListener("load", fn, { once: true }); im.addEventListener("error", fn, { once: true }); } }
+    allImgs.forEach(function (im) { whenReady(im, function () { im.classList.add("ready"); }); });
+    whenReady(firstImg, function () { allImgs.forEach(function (im) { im.loading = "eager"; }); });
     var pos = 1, busy = false, DELAY = 5000, left = DELAY, last_t = Date.now(), hover = false, touching = false, userPaused = false, finishT;
     for (var i = 0; i < n; i++) (function (i) {
       var b = document.createElement("button"); b.setAttribute("aria-label", "Слайд " + (i + 1));
@@ -167,15 +172,18 @@
         list.innerHTML = "<div class='combo__empty'>" + (src.length ? "Такого нет в списке.<br><small>Оставьте как есть — подберём вручную по телефону.</small>" : "Список пуст.<br><small>Впишите значение вручную.</small>") + "</div>";
         return;
       }
+      var lastG = null;
       list.innerHTML = items.map(function (it, i) {
         var cur = norm(it.value) === norm(input.value.trim());
-        return "<div class='combo__opt" + (cur ? " cur" : "") + "' role='option' id='" + list.id + "-" + i + "' data-i='" + i + "'><span class='n'>" + highlight(it.value, q) + "</span>" + (it.meta ? "<span class='m'>" + escHtml(it.meta) + "</span>" : "") + "</div>";
+        var g = "";
+        if (!q && it.group && it.group !== lastG) { lastG = it.group; g = "<div class='combo__grp'>" + escHtml(it.group) + "</div>"; }
+        return g + "<div class='combo__opt" + (cur ? " cur" : "") + "' role='option' id='" + list.id + "-" + i + "' data-i='" + i + "'><span class='n'>" + highlight(it.value, q) + "</span>" + (it.meta ? "<span class='m'>" + escHtml(it.meta) + "</span>" : "") + "</div>";
       }).join("");
       var cur = list.querySelector(".cur"); if (cur) { act = +cur.dataset.i; mark(); }
     }
     function mark() {
-      Array.prototype.forEach.call(list.children, function (c, i) { c.classList.toggle("act", i === act); });
-      var el = list.children[act];
+      Array.prototype.forEach.call(list.querySelectorAll(".combo__opt"), function (c, i) { c.classList.toggle("act", i === act); });
+      var el = list.querySelector('[data-i="' + act + '"]');
       if (el) { input.setAttribute("aria-activedescendant", el.id); el.scrollIntoView({ block: "nearest" }); }
     }
     function open(all) {
@@ -199,21 +207,34 @@
     list.addEventListener("mousedown", function (e) { e.preventDefault(); var o = e.target.closest(".combo__opt"); if (o) pick(+o.dataset.i); });
     btn.addEventListener("mousedown", function (e) { e.preventDefault(); if (isOpen) close(); else { input.focus(); open(true); } });
   }
+  var POPULAR = ["Toyota", "Nissan", "Honda", "Mazda", "Subaru", "Mitsubishi", "Lexus", "Hyundai", "Kia", "BMW", "Mercedes-Benz", "Audi"];
+  var collator = new Intl.Collator(["en", "ru"], { numeric: true, sensitivity: "base" });
+  var PL = { su: "Внедорожники", cr: "Кроссоверы", sd: "Седаны", hb: "Хэтчбеки", wg: "Универсалы", cp: "Купе и лифтбеки", mv: "Минивэны", vn: "Микроавтобусы", pk: "Пикапы" };
+  var BODY_ORDER = ["su", "cr", "sd", "hb", "wg", "cp", "mv", "vn", "pk"];
+  new Combo(brandEl, function () {
+    var mk = function (b, g) { return { value: b, group: g, alias: (window.BRAND_ALIASES || {})[b], meta: CARS[b].length + " мод." }; };
+    var rest = Object.keys(CARS).filter(function (b) { return POPULAR.indexOf(b) < 0 && b !== window.OTHER_BRAND; }).sort(collator.compare);
+    var out = POPULAR.filter(function (b) { return CARS[b]; }).map(function (b) { return mk(b, "Популярные во Владивостоке"); });
+    rest.forEach(function (b) { out.push(mk(b, "Все марки А–Я")); });
+    if (CARS[window.OTHER_BRAND]) out.push(mk(window.OTHER_BRAND, "Нет в списке"));
+    return out;
+  }, function () { onBrand(); modelEl.focus(); });
   function modelAlias(name) {
     var a = [], low = name.toLowerCase(), MA = window.MODEL_ALIASES || {};
     Object.keys(MA).forEach(function (k) { if (low.indexOf(k.toLowerCase()) === 0) a.push(MA[k]); });
     return a.join(" ");
   }
-  new Combo(brandEl, function () {
-    return Object.keys(CARS).map(function (b) { return { value: b, alias: (window.BRAND_ALIASES || {})[b], meta: CARS[b].length + " мод." }; });
-  }, function () { onBrand(); modelEl.focus(); });
   new Combo(modelEl, function () {
-    return (CARS[state.brand] || []).map(function (m) { return { value: m[0], alias: modelAlias(m[0]), meta: B[m[1]].name }; });
+    var list = (CARS[state.brand] || []).slice().sort(function (x, y) {
+      var d = BODY_ORDER.indexOf(x[1]) - BODY_ORDER.indexOf(y[1]);
+      return d || collator.compare(x[0], y[0]);
+    });
+    return list.map(function (m) { return { value: m[0], group: PL[m[1]], alias: modelAlias(m[0]) }; });
   }, function () { onModel(); });
 
   /* популярные марки (Владивосток) */
   var pop = $("#popular");
-  ["Toyota", "Nissan", "Honda", "Mazda", "Subaru", "Mitsubishi", "Lexus", "Hyundai", "Kia", "BMW", "Mercedes-Benz", "Audi"].forEach(function (b) {
+  POPULAR.forEach(function (b) {
     var c = document.createElement("button"); c.type = "button"; c.className = "pchip"; c.textContent = b.replace("Mercedes-Benz", "Mercedes");
     c.addEventListener("click", function () { brandEl.value = b; onBrand(); modelEl.focus(); });
     pop.appendChild(c);
