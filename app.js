@@ -225,7 +225,7 @@
   function ic(body, win, extra, wx) {
     wx = wx || [24, 70];
     var w = wx.map(function (x) { return '<circle cx="' + x + '" cy="34" r="6"/>'; }).join("");
-    return '<svg viewBox="0 0 96 44" aria-hidden="true"><path d="' + body + '"/><path class="win" d="' + (win || "") + '"/>' + (extra || "") + w + '</svg>';
+    return '<svg viewBox="0 0 96 44" aria-hidden="true"><path d="' + body + 'Z"/><path class="win" d="' + (win || "") + '"/>' + (extra || "") + w + '</svg>';
   }
   var ICONS = {
     // хэтчбек: короткий, «обрубленный» зад, купол крыши
