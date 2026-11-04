@@ -152,6 +152,8 @@
   modelEl.addEventListener("input", onModel);
 
   /* ---------- кастомный выпадающий список (combobox) ---------- */
+  function plural(n, a, b, c) { var m = n % 100, k = n % 10; return n + " " + (m > 10 && m < 20 ? c : k === 1 ? a : k >= 2 && k <= 4 ? b : c); }
+  function submitLabel(r) { return discountActive() && r ? "Закрепить скидку −" + fmt(r.price - r.disc) : "Заказать звонок"; }
   function norm(s) { return String(s).toLowerCase().replace(/ё/g, "е"); }
   function escHtml(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function Combo(input, getItems, onPick) {
@@ -169,7 +171,7 @@
       if (q) items.sort(function (a, b) { return (norm(a.value + " " + (a.alias || "")).indexOf(q) !== 0) - (norm(b.value + " " + (b.alias || "")).indexOf(q) !== 0); });
       act = -1;
       if (!items.length) {
-        list.innerHTML = "<div class='combo__empty'>" + (src.length ? "Такого нет в списке.<br><small>Оставьте как есть — подберём вручную по телефону.</small>" : "Список пуст.<br><small>Впишите значение вручную.</small>") + "</div>";
+        list.innerHTML = "<div class='combo__empty'>" + (src.length ? "Такого нет в списке.<br><small>Оставьте как есть — мы подберём вручную по телефону.</small>" : "Список пуст.<br><small>Впишите значение вручную.</small>") + "</div>";
         return;
       }
       var lastG = null;
@@ -212,7 +214,7 @@
   var PL = { su: "Внедорожники", cr: "Кроссоверы", sd: "Седаны", hb: "Хэтчбеки", wg: "Универсалы", cp: "Купе и лифтбеки", mv: "Минивэны", vn: "Микроавтобусы", pk: "Пикапы" };
   var BODY_ORDER = ["su", "cr", "sd", "hb", "wg", "cp", "mv", "vn", "pk"];
   new Combo(brandEl, function () {
-    var mk = function (b, g) { return { value: b, group: g, alias: (window.BRAND_ALIASES || {})[b], meta: CARS[b].length + " мод." }; };
+    var mk = function (b, g) { return { value: b, group: g, alias: (window.BRAND_ALIASES || {})[b], meta: plural(CARS[b].length, "модель", "модели", "моделей") }; };
     var rest = Object.keys(CARS).filter(function (b) { return POPULAR.indexOf(b) < 0 && b !== window.OTHER_BRAND; }).sort(collator.compare);
     var out = POPULAR.filter(function (b) { return CARS[b]; }).map(function (b) { return mk(b, "Популярные во Владивостоке"); });
     rest.forEach(function (b) { out.push(mk(b, "Все марки А–Я")); });
@@ -385,17 +387,17 @@
     $("#priceBox").hidden = !r; $("#priceEmpty").hidden = !!r; $("#leadForm").hidden = !r || !!submitted;
     var pe0 = $("#priceEmpty");
     if (!r) {
-      var msg = !state.brand ? "Выберите марку автомобиля — первый шаг слева." : !state.model ? "Теперь выберите или впишите модель." : "Осталось выбрать тип кузова (шаг 2) — и покажем цену.";
+      var msg = !state.brand ? "Выберите марку автомобиля в первом шаге." : !state.model ? "Теперь выберите или впишите модель." : "Остался тип кузова (шаг 2) — и мы покажем цену.";
       $("#priceHint").textContent = msg; pe0.classList.toggle("hint", !!state.brand);
     }
-    if (!state.known && state.brand) $("#carNote").textContent = "Такой марки нет в списке — ничего страшного: впишите модель, выберите кузов, точную цену назовём по телефону.";
-    else if (state.known && state.model && !state.bodyAuto) $("#carNote").textContent = "Модель вписана вручную — расчёт ориентировочный, точную цену подтвердим по телефону.";
+    if (!state.known && state.brand) $("#carNote").textContent = "Такой марки нет в списке — не страшно: впишите модель, выберите тип кузова, а точную цену мы назовём по телефону.";
+    else if (state.known && state.model && !state.bodyAuto) $("#carNote").textContent = "Модель вписана вручную, поэтому расчёт ориентировочный. Точную цену подтвердим по телефону.";
     else $("#carNote").textContent = "Не нашли свою модель? Впишите её вручную и выберите кузов — цену уточним по телефону.";
     var mc = $(".mbar .btn:last-child");
     if (!r) { mc.textContent = "Рассчитать"; mc.setAttribute("href", "#calc"); return; }
     if (!started) { started = true; startTimer(); track("price_shown", { car: state.brand + " " + state.model }); }
     var active = discountActive();
-    $("#lSubmit").textContent = active ? "Получить звонок со скидкой" : "Заказать звонок";
+    $("#lSubmit").textContent = submitLabel(r);
     $(".lform h4").textContent = active ? "Закрепите скидку — мы перезвоним" : "Оставьте заявку — мы перезвоним";
     var shown = active ? r.disc : r.price;
     $("#priceOld").parentNode.style.visibility = active ? "visible" : "hidden";
@@ -481,7 +483,7 @@
     var r = window.__calc, err = $("#lErr"), n = $("#lName"), p = $("#lPhone");
     err.hidden = true; bad(n, !n.value.trim()); bad(p, !phoneOk(p.value));
     if (!n.value.trim() || !phoneOk(p.value)) { err.textContent = "Укажите имя и телефон полностью."; err.hidden = false; return; }
-    if (yearVal() === null) { bad(yearEl, true); err.textContent = "Год выпуска — четыре цифры, например 2018 (или оставьте поле пустым)."; err.hidden = false; yearEl.scrollIntoView({ block: "center" }); return; }
+    if (yearVal() === null) { bad(yearEl, true); err.textContent = "Укажите год из четырёх цифр, например 2018, или оставьте поле пустым."; err.hidden = false; yearEl.scrollIntoView({ block: "center" }); return; }
     if (!$("#lAgree").checked) { err.textContent = "Нужно согласие на обработку данных."; err.hidden = false; return; }
     if ($("#lHp").value) { submitted = true; $("#leadForm").hidden = true; $("#done").hidden = false; return; }
     var btn = $("#lSubmit"); btn.disabled = true; btn.classList.add("loading"); btn.textContent = "Отправляем…";
@@ -504,7 +506,7 @@
       $("#done").scrollIntoView({ behavior: "smooth", block: "center" });
     }).catch(function () {
       err.innerHTML = "Не удалось отправить заявку. Позвоните нам: <a href='tel:" + C.phoneRaw + "' style='text-decoration:underline'>" + C.phone + "</a> или напишите в Telegram.";
-      err.hidden = false; btn.disabled = false; btn.classList.remove("loading"); btn.textContent = discountActive() ? "Получить звонок со скидкой" : "Заказать звонок";
+      err.hidden = false; btn.disabled = false; btn.classList.remove("loading"); btn.textContent = submitLabel(window.__calc);
     });
   });
 
